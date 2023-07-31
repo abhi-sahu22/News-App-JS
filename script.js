@@ -12,9 +12,17 @@ function reload() {
     window.location.reload()
 }
 
+const headers = new Headers({
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'
+  });
+
 //Data fetching from the API
 async function fetchNews(query) {
-    const res = await fetch(`${URL}${query}&apiKey=${API_KEY}`)
+    const res = await fetch(`${URL}${query}&apiKey=${API_KEY}`, {
+        method: 'GET',
+        headers: headers
+      });
     if (!res.ok) {
         console.error(`Failed to fetch data. Status code: ${res.status}`);
         return;
