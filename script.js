@@ -12,52 +12,26 @@ function reload() {
     window.location.reload()
 }
 
-const headers = new Headers({
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*'
-  });
-
 //Data fetching from the API
 async function fetchNews(query) {
-    const res = await fetch(`${URL}${query}&apiKey=${API_KEY}`, {
-        method: 'GET',
-        headers: headers
-      });
-    if (!res.ok) {
-        console.error(`Failed to fetch data. Status code: ${res.status}`);
-        return;
-    }
-    const data = await res.json()
-    bindData(data.articles)
+    const res = await fetch(`${URL}${query}&apiKey=${API_KEY}`);
+    const data = await res.json();
+    bindData(data.articles);
 }
 
 //Function bindData invoked in function fetchNews
 async function bindData(articles) {
-    const cardsContainer = document.getElementById('cards-container')
-    const newsCardTemplate = document.getElementById('template-news-card')
+    const cardsContainer = document.getElementById("cards-container");
+    const newsCardTemplate = document.getElementById("template-news-card");
 
-    cardsContainer.innerHTML = '';
+    cardsContainer.innerHTML = "";
 
-    for (const article of articles) {
-        try {
-            const res = await fetch(article.urlToImage);
-
-            if (res.status >= 400 && res.status < 500) {
-                continue;
-            }
-
-            if (!res.ok) {
-                console.error(`Failed to fetch image. Status code: ${res.status}`);
-                continue;
-            }
-
-            const cardClone = newsCardTemplate.content.cloneNode(true);
-            fillDataInCard(cardClone, article);
-            cardsContainer.appendChild(cardClone);
-        } catch (error) {
-            console.error("Failed to fetch image:", error);
-        }
-    }
+    articles.forEach((article) => {
+        if (!article.urlToImage) return;
+        const cardClone = newsCardTemplate.content.cloneNode(true);
+        fillDataInCard(cardClone, article);
+        cardsContainer.appendChild(cardClone);
+    });
 }
 
 
